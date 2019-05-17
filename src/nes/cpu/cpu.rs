@@ -1,3 +1,7 @@
+use nes::Nes;
+
+use crate::nes::memory::memory::Memory;
+
 type byte = u8;
 
 pub struct CPU {
@@ -152,4 +156,42 @@ const INSTRUCTION_NAMES: [&str; 256] = [
     "BEQ", "SBC", "KIL", "ISC", "NOP", "SBC", "INC", "ISC",
     "SED", "SBC", "NOP", "ISC", "NOP", "SBC", "INC", "ISC",
 ];
+
+impl CPU {
+    pub fn create_cpu(nes: &Nes) -> CPU {
+
+        return CPU {
+            cycles: 0,
+            pc: 0,
+            sp: 0,
+            a: 0,
+            x: 0,
+            y: 0,
+            c: 0,
+            z: 0,
+            i: 0,
+            d: 0,
+            b: 0,
+            u: 0,
+            v: 0,
+            n: 0,
+            interrupt: 0,
+            stall: 0,
+        };
+
+    }
+
+    pub fn step() {}
+
+    pub fn reset(&mut self) {
+//        self.pc = read16(0xFFFC);
+        self.sp = 0xFD;
+        self.SetFlags(0x24);
+    }
+
+    // Read16 reads two bytes using Read to return a double-word value
+    fn read16(&self, address: u16) {
+        self.memory.read(address);
+    }
+}
 

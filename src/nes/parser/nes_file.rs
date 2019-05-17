@@ -9,6 +9,7 @@ use std::io::{ErrorKind, Read};
 use std::io::Error;
 
 use byteorder::{ByteOrder, LittleEndian, ReadBytesExt};
+use bytes::BytesMut;
 
 const NES_FILE_MAGIC: u32 = 0x1a53454e;
 
@@ -30,8 +31,8 @@ pub struct NesFileHeader {
 }
 
 pub struct Cartridge {
-    pub prg: Vec<u8>,
-    pub chr: Vec<u8>,
+    pub prg: BytesMut,
+    pub chr: BytesMut,
     pub mapper: u8,
     pub mirror: u8,
     pub battery: u8,
@@ -82,15 +83,15 @@ pub fn read_nes_rom(path: &str) -> Result<Cartridge> {
         rom.read(&mut train);
     }
 
-    let mut prg = Vec::with_capacity(((header.num_prg as i32 * 16384) as usize));
+    let mut prg = BytesMut::with_capacity((header.num_prg as i32 * 16384) as usize);
     rom.read(&mut prg);
 
-    let mut chr = Vec::with_capacity(((header.num_chr as i32 * 8192) as usize));
+    let mut chr = BytesMut::with_capacity((header.num_chr as i32 * 8192) as usize);
     rom.read(&mut chr);
 
     Ok(Cartridge {
-        prg: prg.to_vec(),
-        chr: chr.to_vec(),
+        prg,
+        chr,
         mapper,
         mirror,
         battery,
